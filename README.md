@@ -18,6 +18,12 @@ Computor v1 parses a polynomial equation, reduces it, determines its degree, and
 $> ./computor "<equation>"
 ```
 
+```
+$> ./computor
+```
+Equation can be inputted from STDIN as well
+
+
 Each term must follow the form `a * X^p` (coefficient, then power).
 
 ## Example

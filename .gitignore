@@ -2,3 +2,7 @@
 
 !.gitignore
 !*.md
+!Makefile
+
+!*.go
+!go.mod
