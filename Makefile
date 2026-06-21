@@ -4,4 +4,4 @@ all		:
 
 format :
 	gofmt -s -w .
-	goimports
+	goimports -w .
