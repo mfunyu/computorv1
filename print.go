@@ -5,22 +5,22 @@ import (
 	"sort"
 )
 
-func (polynomial Polynomial) print() {
-	for i, nomial := range polynomial.monomials {
+func (p polynomial) print() {
+	for i, m := range p.monomials {
 		switch {
-		case i != 0 && nomial.coefficient < 0:
+		case i != 0 && m.coefficient < 0:
 			fmt.Print("- ")
-			nomial.coefficient *= -1
-		case i != 0 && nomial.coefficient > 0:
+			m.coefficient *= -1
+		case i != 0 && m.coefficient > 0:
 			fmt.Print("+ ")
 		default:
 		}
-		fmt.Printf("%g * X^%d ", nomial.coefficient, nomial.exponent)
+		fmt.Printf("%g * X^%d ", m.coefficient, m.exponent)
 	}
 	fmt.Println("= 0")
 }
 
-func (p *Polynomial) reduce() {
+func (p *polynomial) reduce() {
 	sort.Slice(p.monomials, func(i, j int) bool {
 		return p.monomials[i].exponent < p.monomials[j].exponent
 	})

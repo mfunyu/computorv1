@@ -60,7 +60,7 @@ func parseFloatPrefix(input string) (float64, int, error) {
 }
 
 func parseToMonomial(input string) (monomial, int) {
-	nomial := monomial{
+	m := monomial{
 		coefficient: 1,
 		exponent:    0,
 	}
@@ -73,7 +73,7 @@ func parseToMonomial(input string) (monomial, int) {
 	for i < len(input) {
 		fmt.Printf("Parsing char: %c, index: %d, isE: %d\n", input[i], i, isExponent)
 		if isEndToken(before, input[i]) {
-			return nomial, i
+			return m, i
 		}
 		if !isValidChar(before, input[i]) {
 			//should return error
@@ -94,7 +94,7 @@ func parseToMonomial(input string) (monomial, int) {
 					break
 				}
 				fmt.Printf("exponent: %d, len: %d\n", int_val, len)
-				nomial.exponent = int_val
+				m.exponent = int_val
 				isExponent = false
 			} else {
 				float, len, err = parseFloatPrefix(input[i:])
@@ -103,7 +103,7 @@ func parseToMonomial(input string) (monomial, int) {
 					fmt.Printf("Error parsing float: %v\n", err)
 					break
 				}
-				nomial.coefficient *= float
+				m.coefficient *= float
 				fmt.Printf("coefficient: %f, len: %d\n", float, len)
 			}
 			i += len
@@ -112,7 +112,7 @@ func parseToMonomial(input string) (monomial, int) {
 			fallthrough
 		case c == '-':
 			// '-' -> -1, '+' -> 1
-			nomial.coefficient *= float64(44 - int(c))
+			m.coefficient *= float64(44 - int(c))
 			i++
 		case c == 'X':
 			if seenX {
@@ -128,24 +128,24 @@ func parseToMonomial(input string) (monomial, int) {
 			i++
 		}
 	}
-	return nomial, i
+	return m, i
 }
 
-func parseToPolynomial(input string) (polynomial Polynomial) {
+func parseToPolynomial(input string) (p polynomial) {
 	for i := 0; i < len(input); {
 		monomial, len := parseToMonomial(input[i:])
 		i += len
 		fmt.Printf("Current index: %d, last char: %c\n", i, input[i-1])
 		fmt.Printf("Parsed monomial: %+v, length: %d\n", monomial, len)
-		polynomial.monomials = append(polynomial.monomials, monomial)
+		p.monomials = append(p.monomials, monomial)
 	}
-	return polynomial
+	return p
 }
 
-func ParseInput(input string) (Polynomial, error) {
+func ParseInput(input string) (polynomial, error) {
 	// separate right and left of equation
 	if cnt := strings.Count(input, "="); cnt != 1 {
-		return Polynomial{}, fmt.Errorf("equation must contains exactly 1 '=', got: %d", cnt)
+		return polynomial{}, fmt.Errorf("equation must contains exactly 1 '=', got: %d", cnt)
 	}
 
 	trimmed := strings.ReplaceAll(input, " ", "")

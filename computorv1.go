@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-type Polynomial struct {
+type polynomial struct {
 	monomials []monomial
 }
 
