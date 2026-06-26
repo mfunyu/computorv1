@@ -2,46 +2,96 @@ package main
 
 import "testing"
 
-func TestGetValidatedEquation_Success(t *testing.T) {
+func TestParseInput_Success(t *testing.T) {
+
 	tests := []struct {
 		name string
-		arg args
-		want string
+		arg  string
+		want *Polynomial
 	}{
 		{
 			name: "Most classic function with spaces and multipication sign",
 			arg: "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0",
-			want:
+			want: *Polynomial{
+				nonomials: []monomial{
+					{operator: 1, coefficient: 5, exponent: 0},
+					{operator: 1, coefficient: 4, exponent: 1},
+					{operator: -1, coefficient: 9.3, exponent: 2},
+					{operator: -1, coefficient: 1, exponent: 0},
+				},
+			},
 		},
 		{
 			name: "Inversed order with spaces and multipication sign",
 			arg: "X^0* 5 + X^1 * 1 - X^2 * 9.3 = 1 * X^0",
-			want:
+			want: *Polynomial{
+				nonomials: []monomial{
+					{operator: 1, coefficient: 5, exponent: 0},
+					{operator: 1, coefficient: 1, exponent: 1},
+					{operator: -1, coefficient: 9.3, exponent: 2},
+					{operator: -1, coefficient: 1, exponent: 0},
+				},
+			},
 		},
 		{
 			name: "Basic",
 			arg: "5X^0 + 4X^1 - 9.3X^2 = 1X^0",
-			want:
+			want: *Polynomial{
+				nonomials: []monomial{
+					{operator: 1, coefficient: 5, exponent: 0},
+					{operator: 1, coefficient: 4, exponent: 1},
+					{operator: -1, coefficient: 9.3, exponent: 2},
+					{operator: -1, coefficient: 1, exponent: 0},
+				},
+			},
 		},
 		{
 			name: "No spaces",
 			arg: "5X^0+4X^1-9.3X^2=1X^0",
-			want:
+			want: *Polynomial{
+				nonomials: []monomial{
+					{operator: 1, coefficient: 5, exponent: 0},
+					{operator: 1, coefficient: 4, exponent: 1},
+					{operator: -1, coefficient: 9.3, exponent: 2},
+					{operator: -1, coefficient: 1, exponent: 0},
+				},
+			},
 		},
 		{
 			name: "Omitted X^0 and X^1",
 			arg: "5+4X-9.3X^2=1",
-			want:
+			want: *Polynomial{
+				nonomials: []monomial{
+					{operator: 1, coefficient: 5, exponent: 0},
+					{operator: 1, coefficient: 4, exponent: 1},
+					{operator: -1, coefficient: 9.3, exponent: 2},
+					{operator: -1, coefficient: 1, exponent: 0},
+				},
+			},
 		},
 		{
 			name: "Have operators for the first expressions",
 			arg: "-5X^0+4X^1-9.3X^2=+1X^0",
-			want:
+			want: *Polynomial{
+				nonomials: []monomial{
+					{operator: -1, coefficient: 5, exponent: 0},
+					{operator: 1, coefficient: 4, exponent: 1},
+					{operator: -1, coefficient: 9.3, exponent: 2},
+					{operator: 1, coefficient: 1, exponent: 0},
+				},
+			},
 		},
 		{
 			name: "Omitted coefficient when 1",
 			arg: "5+X-X^2=1",
-			want:
+			want: *Polynomial{
+				nonomials: []monomial{
+					{operator: 1, coefficient: 5, exponent: 0},
+					{operator: 1, coefficient: 1, exponent: 1},
+					{operator: -1, coefficient: 1, exponent: 2},
+					{operator: -1, coefficient: 1, exponent: 0},
+				},
+			},
 		},
 	}
 
@@ -51,21 +101,21 @@ func TestGetValidatedEquation_Success(t *testing.T) {
 
 			got, err := computorv1(t)
 			if err != nil {
-				t.Errorf("GetValidatedEquation() expect nil error but got %v", err)
+				t.Errorf("ParseInput() expect nil error but got %v", err)
 			}
 
 			if diff := pkgcmp.Diff(got, tt.want); diff != nil {
-				t.Errorf("GetValidatedEquation() response mismatch = (-want +got):\n%s", diff)
+				t.Errorf("ParseInput() response mismatch = (-want +got):\n%s", diff)
 			}
-		}
+		})
 	}
 }
 
-func TestGetValidatedEquation_Error(t *testing.T) {
+func TestParseInput_Error(t *testing.T) {
 	tests := []struct {
 		name string
 		arg args
-		want string
+		want
 	}{
 		{
 			name: "Negative exponents",

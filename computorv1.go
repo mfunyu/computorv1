@@ -21,7 +21,8 @@ func getValidatedEquation(argv []string) (string, error) {
 	switch len(argv) {
 	case 2:
 		// validate input
-		return ParseInput(argv[1])
+		ParseInput(argv[1])
+		return "", nil
 	case 1:
 		// loop until getting a correct equation
 		scanner := bufio.NewScanner(os.Stdin)
@@ -42,7 +43,6 @@ func getValidatedEquation(argv []string) (string, error) {
 		fmt.Println("Usage: ./computorv1 <equation>")
 		return "", nil
 	}
-	return "", nil
 }
 
 func computorv1() error {
