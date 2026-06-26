@@ -158,7 +158,7 @@ func ParseInput(input string) (Polynomial, error) {
 	// RHS := split[1]
 
 	p := parseToPolynomial(LHS)
-
+	p.reduce()
 	//tmp
 	p.print()
 

@@ -21,14 +21,38 @@ func (polynomial *Polynomial) print() {
 	fmt.Println("= 0")
 }
 
-func (polynomial *Polynomial) reduce() {
-	sort.Slice(polynomial.monomials, func(i, j int) bool {
-		return polynomial.monomials[i].exponent < polynomial.monomials[j].exponent
+func (p *Polynomial) reduce() {
+	sort.Slice(p.monomials, func(i, j int) bool {
+		return p.monomials[i].exponent < p.monomials[j].exponent
 	})
-	for i := 0; i+1 < len(polynomial.monomials); {
-		if polynomial.monomials[i].exponent != polynomial.monomials[i+1].exponent {
+	var reducedMonomials []monomial
+	i := 0
+	for i+1 < len(p.monomials) {
+		current := p.monomials[i]
+		if current.exponent == p.monomials[i+1].exponent {
+			current.add(p.monomials[i+1])
 			i++
 		}
+		reducedMonomials = append(reducedMonomials, current)
 		i++
+	}
+	if i < len(p.monomials) {
+		reducedMonomials = append(reducedMonomials, p.monomials[i])
+	}
+
+	p.monomials = reducedMonomials
+}
+
+func (m *monomial) add(other monomial) {
+	if m.exponent != other.exponent {
+		fmt.Println("Cannot add monomials with different exponents")
+		return
+	}
+	m.coefficient = m.coefficient * float64(m.operator) + other.coefficient * float64(other.operator)
+	if m.coefficient < 0 {
+		m.operator = -1
+		m.coefficient = -m.coefficient
+	} else {
+		m.operator = 1
 	}
 }
