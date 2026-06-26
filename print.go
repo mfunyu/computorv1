@@ -43,10 +43,26 @@ func (p *polynomial) reduce() {
 	p.monomials = reducedMonomials
 }
 
+func (p polynomial) Equal(other polynomial) bool {
+	if len(p.monomials) != len(other.monomials) {
+		return false
+	}
+	for i := range p.monomials {
+		if !p.monomials[i].Equal(other.monomials[i]) {
+			return false
+		}
+	}
+	return true
+}
+
 func (m *monomial) add(other monomial) {
 	if m.exponent != other.exponent {
 		fmt.Println("Cannot add monomials with different exponents")
 		return
 	}
 	m.coefficient += other.coefficient
+}
+
+func (m monomial) Equal(other monomial) bool {
+	return m.coefficient == other.coefficient && m.exponent == other.exponent
 }
