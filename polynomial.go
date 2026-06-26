@@ -5,6 +5,10 @@ import (
 	"sort"
 )
 
+type polynomial struct {
+	monomials []monomial
+}
+
 func (p polynomial) print() {
 	for i, m := range p.monomials {
 		switch {
@@ -64,6 +68,11 @@ func (p polynomial) Equal(other polynomial) bool {
 		}
 	}
 	return true
+}
+
+type monomial struct {
+	coefficient float64
+	exponent    int
 }
 
 func (m *monomial) add(other monomial) {

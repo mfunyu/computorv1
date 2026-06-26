@@ -7,15 +7,6 @@ import (
 	"os"
 )
 
-type polynomial struct {
-	monomials []monomial
-}
-
-type monomial struct {
-	coefficient float64
-	exponent    int
-}
-
 func getValidatedEquation(argv []string) (string, error) {
 	switch len(argv) {
 	case 2:
