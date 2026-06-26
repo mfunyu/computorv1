@@ -54,7 +54,6 @@ func (p *polynomial) reverse() {
 	p.print()
 }
 
-
 func (p polynomial) Equal(other polynomial) bool {
 	if len(p.monomials) != len(other.monomials) {
 		return false

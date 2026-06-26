@@ -54,7 +54,6 @@ func parseFloatPrefix(input string) (float64, int, error) {
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to parse float: %v", err)
 	}
-	fmt.Printf("Parsed float: %f, length: %d\n", float, len(match))
 
 	return float, len(match), nil
 }
@@ -71,7 +70,6 @@ func parseToMonomial(input string) (monomial, int) {
 	var before byte = 0
 	i := 0
 	for i < len(input) {
-		fmt.Printf("Parsing char: %c, index: %d\n", input[i], i)
 		if isEndToken(before, input[i]) {
 			return m, i
 		}
@@ -93,7 +91,6 @@ func parseToMonomial(input string) (monomial, int) {
 					// should return error
 					break
 				}
-				fmt.Printf("exponent: %d, len: %d\n", int_val, len)
 				m.exponent = int_val
 				isExponent = false
 			} else {
@@ -104,10 +101,8 @@ func parseToMonomial(input string) (monomial, int) {
 					break
 				}
 				m.coefficient *= float
-				fmt.Printf("coefficient: %f, len: %d\n", float, len)
 			}
 			i += len
-			fmt.Printf("i:%d, len:%d\n", i, len)
 		case c == '+':
 			fallthrough
 		case c == '-':
@@ -135,10 +130,8 @@ func parseToMonomial(input string) (monomial, int) {
 func parseToPolynomial(input string) (p polynomial) {
 	for i := 0; i < len(input); {
 		monomial, len := parseToMonomial(input[i:])
-		i += len
-		fmt.Printf("Current index: %d, last char: %c\n", i, input[i-1])
-		fmt.Printf("Parsed monomial: %+v, length: %d\n", monomial, len)
 		p.monomials = append(p.monomials, monomial)
+		i += len
 	}
 	return p
 }
@@ -151,33 +144,14 @@ func ParseInput(input string) (polynomial, error) {
 
 	trimmed := strings.ReplaceAll(input, " ", "")
 	toupper := strings.ToUpper(trimmed)
-	fmt.Printf("Input: %s\n", toupper)
 	split := strings.Split(toupper, "=")
 	LHS := split[0]
 	RHS := split[1]
-	fmt.Printf("LHS: %s\n", LHS)
 	lhs := parseToPolynomial(LHS)
 	rhs := parseToPolynomial(RHS)
-	lhs.print()
 	rhs.reverse()
-	rhs.print()
 	lhs.add(rhs)
 	lhs.reduce()
-	//tmp
-	lhs.print()
 
-	// rule 1: ^ needs to be present, cannot have
-	// possible chars: number, '.', 'X', '-/+', '*', '^'
-	// for number -> *, X, end
-	// for X(x) -> ^, *, end
-	// for - / + -> number, X
-	// for ^ -> number
-	// start -> -/+, number, X
-
-	// 5X
-	// -5X
-	// X^(number) / X *+-
-
-	// for number -> check next: if X = coefficience, +
 	return lhs, nil
 }
