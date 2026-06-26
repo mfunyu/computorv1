@@ -18,10 +18,9 @@ func TestParseInput_Success(t *testing.T) {
 			arg:  "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0",
 			want: polynomial{
 				monomials: []monomial{
-					{coefficient: 5, exponent: 0},
+					{coefficient: 4, exponent: 0},
 					{coefficient: 4, exponent: 1},
 					{coefficient: -9.3, exponent: 2},
-					{coefficient: 1, exponent: 0},
 				},
 			},
 		},
@@ -30,10 +29,9 @@ func TestParseInput_Success(t *testing.T) {
 			arg:  "X^0* 5 + X^1 * 1 - X^2 * 9.3 = 1 * X^0",
 			want: polynomial{
 				monomials: []monomial{
-					{coefficient: 5, exponent: 0},
+					{coefficient: 4, exponent: 0},
 					{coefficient: 1, exponent: 1},
-					{coefficient: 9.3, exponent: 2},
-					{coefficient: 1, exponent: 0},
+					{coefficient: -9.3, exponent: 2},
 				},
 			},
 		},
@@ -42,10 +40,9 @@ func TestParseInput_Success(t *testing.T) {
 			arg:  "5X^0 + 4X^1 - 9.3X^2 = 1X^0",
 			want: polynomial{
 				monomials: []monomial{
-					{coefficient: 5, exponent: 0},
+					{coefficient: 4, exponent: 0},
 					{coefficient: 4, exponent: 1},
-					{coefficient: 9.3, exponent: 2},
-					{coefficient: 1, exponent: 0},
+					{coefficient: -9.3, exponent: 2},
 				},
 			},
 		},
@@ -54,10 +51,9 @@ func TestParseInput_Success(t *testing.T) {
 			arg:  "5X^0+4X^1-9.3X^2=1X^0",
 			want: polynomial{
 				monomials: []monomial{
-					{coefficient: 5, exponent: 0},
+					{coefficient: 4, exponent: 0},
 					{coefficient: 4, exponent: 1},
-					{coefficient: 9.3, exponent: 2},
-					{coefficient: 1, exponent: 0},
+					{coefficient: -9.3, exponent: 2},
 				},
 			},
 		},
@@ -66,10 +62,9 @@ func TestParseInput_Success(t *testing.T) {
 			arg:  "5+4X-9.3X^2=1",
 			want: polynomial{
 				monomials: []monomial{
-					{coefficient: 5, exponent: 0},
+					{coefficient: 4, exponent: 0},
 					{coefficient: 4, exponent: 1},
-					{coefficient: 9.3, exponent: 2},
-					{coefficient: 1, exponent: 0},
+					{coefficient: -9.3, exponent: 2},
 				},
 			},
 		},
@@ -78,10 +73,9 @@ func TestParseInput_Success(t *testing.T) {
 			arg:  "-5X^0+4X^1-9.3X^2=+1X^0",
 			want: polynomial{
 				monomials: []monomial{
-					{coefficient: 5, exponent: 0},
+					{coefficient: -6, exponent: 0},
 					{coefficient: 4, exponent: 1},
-					{coefficient: 9.3, exponent: 2},
-					{coefficient: 1, exponent: 0},
+					{coefficient: -9.3, exponent: 2},
 				},
 			},
 		},
@@ -90,10 +84,9 @@ func TestParseInput_Success(t *testing.T) {
 			arg:  "5+X-X^2=1",
 			want: polynomial{
 				monomials: []monomial{
-					{coefficient: 5, exponent: 0},
+					{coefficient: 4, exponent: 0},
 					{coefficient: 1, exponent: 1},
-					{coefficient: 1, exponent: 2},
-					{coefficient: 1, exponent: 0},
+					{coefficient: -1, exponent: 2},
 				},
 			},
 		},

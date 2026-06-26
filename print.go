@@ -43,6 +43,18 @@ func (p *polynomial) reduce() {
 	p.monomials = reducedMonomials
 }
 
+func (p *polynomial) add(other polynomial) {
+	p.monomials = append(p.monomials, other.monomials...)
+}
+
+func (p *polynomial) reverse() {
+	for i := range p.monomials {
+		p.monomials[i].coefficient *= -1
+	}
+	p.print()
+}
+
+
 func (p polynomial) Equal(other polynomial) bool {
 	if len(p.monomials) != len(other.monomials) {
 		return false

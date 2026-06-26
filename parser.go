@@ -71,7 +71,7 @@ func parseToMonomial(input string) (monomial, int) {
 	var before byte = 0
 	i := 0
 	for i < len(input) {
-		fmt.Printf("Parsing char: %c, index: %d, isE: %d\n", input[i], i, isExponent)
+		fmt.Printf("Parsing char: %c, index: %d\n", input[i], i)
 		if isEndToken(before, input[i]) {
 			return m, i
 		}
@@ -119,6 +119,7 @@ func parseToMonomial(input string) (monomial, int) {
 				// should return error
 				break
 			}
+			m.exponent = 1
 			seenX = true
 			i++
 		case c == '^':
@@ -153,12 +154,17 @@ func ParseInput(input string) (polynomial, error) {
 	fmt.Printf("Input: %s\n", toupper)
 	split := strings.Split(toupper, "=")
 	LHS := split[0]
-	// RHS := split[1]
-
-	p := parseToPolynomial(LHS)
-	p.reduce()
+	RHS := split[1]
+	fmt.Printf("LHS: %s\n", LHS)
+	lhs := parseToPolynomial(LHS)
+	rhs := parseToPolynomial(RHS)
+	lhs.print()
+	rhs.reverse()
+	rhs.print()
+	lhs.add(rhs)
+	lhs.reduce()
 	//tmp
-	p.print()
+	lhs.print()
 
 	// rule 1: ^ needs to be present, cannot have
 	// possible chars: number, '.', 'X', '-/+', '*', '^'
@@ -173,5 +179,5 @@ func ParseInput(input string) (polynomial, error) {
 	// X^(number) / X *+-
 
 	// for number -> check next: if X = coefficience, +
-	return p, nil
+	return lhs, nil
 }
