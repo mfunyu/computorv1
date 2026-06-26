@@ -12,7 +12,6 @@ type Polynomial struct {
 }
 
 type monomial struct {
-	operator    int
 	coefficient float64
 	exponent    int
 }

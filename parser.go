@@ -61,7 +61,6 @@ func parseFloatPrefix(input string) (float64, int, error) {
 
 func parseToMonomial(input string) (monomial, int) {
 	nomial := monomial{
-		operator:    1,
 		coefficient: 1,
 		exponent:    0,
 	}
@@ -113,8 +112,7 @@ func parseToMonomial(input string) (monomial, int) {
 			fallthrough
 		case c == '-':
 			// '-' -> -1, '+' -> 1
-			nomial.operator *= 44 - int(c)
-			fmt.Printf("operator: %d, char: %c\n", nomial.operator, c)
+			nomial.coefficient *= float64(44 - int(c))
 			i++
 		case c == 'X':
 			if seenX {
@@ -137,8 +135,8 @@ func parseToPolynomial(input string) (polynomial Polynomial) {
 	for i := 0; i < len(input); {
 		monomial, len := parseToMonomial(input[i:])
 		i += len
-		fmt.Printf("Current index: %d, next char: %c\n", i, input[i-1])
-		fmt.Printf("operator: %d, coefficient: %f, exponent: %d\n", monomial.operator, monomial.coefficient, monomial.exponent)
+		fmt.Printf("Current index: %d, last char: %c\n", i, input[i-1])
+		fmt.Printf("Parsed monomial: %+v, length: %d\n", monomial, len)
 		polynomial.monomials = append(polynomial.monomials, monomial)
 	}
 	return polynomial

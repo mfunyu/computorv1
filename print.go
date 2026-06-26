@@ -5,14 +5,13 @@ import (
 	"sort"
 )
 
-func (polynomial *Polynomial) print() {
+func (polynomial Polynomial) print() {
 	for i, nomial := range polynomial.monomials {
 		switch {
-		case i == 0 && nomial.operator == -1:
-			fmt.Print("-")
-		case i != 0 && nomial.operator == -1:
+		case i != 0 && nomial.coefficient < 0:
 			fmt.Print("- ")
-		case i != 0 && nomial.operator == 1:
+			nomial.coefficient *= -1
+		case i != 0 && nomial.coefficient > 0:
 			fmt.Print("+ ")
 		default:
 		}
@@ -25,6 +24,7 @@ func (p *Polynomial) reduce() {
 	sort.Slice(p.monomials, func(i, j int) bool {
 		return p.monomials[i].exponent < p.monomials[j].exponent
 	})
+
 	var reducedMonomials []monomial
 	i := 0
 	for i+1 < len(p.monomials) {
@@ -48,11 +48,5 @@ func (m *monomial) add(other monomial) {
 		fmt.Println("Cannot add monomials with different exponents")
 		return
 	}
-	m.coefficient = m.coefficient * float64(m.operator) + other.coefficient * float64(other.operator)
-	if m.coefficient < 0 {
-		m.operator = -1
-		m.coefficient = -m.coefficient
-	} else {
-		m.operator = 1
-	}
+	m.coefficient += other.coefficient
 }
