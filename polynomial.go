@@ -33,7 +33,7 @@ func (p *polynomial) reduce() {
 	i := 0
 	for i+1 < len(p.monomials) {
 		current := p.monomials[i]
-		if current.exponent == p.monomials[i+1].exponent {
+		for i+1 < len(p.monomials) && current.exponent == p.monomials[i+1].exponent {
 			current.add(p.monomials[i+1])
 			i++
 		}

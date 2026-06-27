@@ -112,6 +112,26 @@ func TestParseInput_Success(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Multiple X with same exponent",
+			arg:  "5X^0+4X^1-9.3X^2+1X^1+7X^0-4X^0=1X^0",
+			want: &polynomial{
+				monomials: []monomial{
+					{coefficient: 7, exponent: 0},
+					{coefficient: 5, exponent: 1},
+					{coefficient: -9.3, exponent: 2},
+				},
+			},
+		},
+		{
+			name: "Zero equation",
+			arg:  "0=0",
+			want: &polynomial{
+				monomials: []monomial{
+					{coefficient: 0, exponent: 0},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
