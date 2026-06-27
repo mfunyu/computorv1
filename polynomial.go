@@ -55,7 +55,6 @@ func (p *polynomial) reverse() {
 	for i := range p.monomials {
 		p.monomials[i].coefficient *= -1
 	}
-	p.print()
 }
 
 func (p polynomial) Equal(other polynomial) bool {

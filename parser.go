@@ -9,7 +9,7 @@ import (
 	"unicode"
 )
 
-func isValidChar(current, next byte) bool {
+func isValidChar(prev, current byte) bool {
 	validNextChars := map[byte]string{
 		'*': "X0123456789.",
 		'X': "^*",
@@ -17,31 +17,31 @@ func isValidChar(current, next byte) bool {
 		'+': "X0123456789.",
 		'^': "0123456789",
 	}
-	if current == 0 { // First char
-		return strings.ContainsRune("-+X.0123456789", rune(next))
-	} else if valids, ok := validNextChars[current]; ok {
-		return strings.ContainsRune(valids, rune(next))
-	} else if unicode.IsDigit(rune(current)) {
-		return next == '*' || next == 'X'
+	if prev == 0 { // First char
+		return strings.ContainsRune("-+X.0123456789", rune(current))
+	} else if valids, ok := validNextChars[prev]; ok {
+		return strings.ContainsRune(valids, rune(current))
+	} else if unicode.IsDigit(rune(prev)) {
+		return current == '*' || current == 'X'
 	}
 	return false
 }
 
-func isEndToken(before, current byte) bool {
-	if before == 'X' || unicode.IsDigit(rune(before)) {
+func isEndToken(prev, current byte) bool {
+	if prev == 'X' || unicode.IsDigit(rune(prev)) {
 		return current == '+' || current == '-'
 	}
 	return false
 }
 
 func parseIntPrefix(input string) (int, int, error) {
-	var int_val int
-	_, err := fmt.Sscanf(input, "%d", &int_val)
+	var val int
+	_, err := fmt.Sscanf(input, "%d", &val)
 	if err != nil {
 		return 0, 0, err
 	}
-	int_str := fmt.Sprintf("%d", int_val)
-	return int_val, len(int_str), nil
+	str := fmt.Sprintf("%d", val)
+	return val, len(str), nil
 }
 
 func parseFloatPrefix(input string) (float64, int, error) {
@@ -64,59 +64,47 @@ func parseToMonomial(input string) (*monomial, int, error) {
 		exponent:    0,
 	}
 
-	isExponent := false
-	seenX := false
-
-	var before byte = 0
+	var isExponent bool
+	var seenX bool
+	var prev byte
 	i := 0
 	for i < len(input) {
-		if isEndToken(before, input[i]) {
+		if isEndToken(prev, input[i]) {
 			return m, i, nil
 		}
-		if !isValidChar(before, input[i]) {
-			return nil, 0, fmt.Errorf("invalid char combinations: %c then %c", before, input[i])
+		if !isValidChar(prev, input[i]) {
+			return nil, 0, fmt.Errorf("invalid char combinations: %c then %c", prev, input[i])
 		}
-		before = input[i]
+		prev = input[i]
 		switch c := input[i]; {
-		case unicode.IsDigit(rune(c)):
-			var len int
-			var float float64
-			var err error
-			if isExponent {
-				var int_val int
-				int_val, len, err = parseIntPrefix(input[i:])
-				if err != nil {
-					return nil, 0, fmt.Errorf("parsing exponent: %v\n", err)
-				}
-				m.exponent = int_val
-				isExponent = false
-			} else {
-				float, len, err = parseFloatPrefix(input[i:])
-				if err != nil {
-					return nil, 0, fmt.Errorf("parsing coefficient: %v\n", err)
-				}
-				m.coefficient *= float
+		case unicode.IsDigit(rune(c)) && isExponent:
+			val, len, err := parseIntPrefix(input[i:])
+			if err != nil {
+				return nil, 0, fmt.Errorf("parsing exponent: %v\n", err)
 			}
-			i += len
-		case c == '+':
-			fallthrough
+			m.exponent = val
+			isExponent = false
+			i += len - 1
+		case unicode.IsDigit(rune(c)):
+			val, len, err := parseFloatPrefix(input[i:])
+			if err != nil {
+				return nil, 0, fmt.Errorf("parsing coefficient: %v\n", err)
+			}
+			m.coefficient *= val
+			i += len - 1
 		case c == '-':
-			// '-' -> -1, '+' -> 1
-			m.coefficient *= float64(44 - int(c))
-			i++
+			m.coefficient *= -1
 		case c == 'X':
 			if seenX {
 				return nil, 0, errors.New("one clause can only have one X")
 			}
 			m.exponent = 1
 			seenX = true
-			i++
 		case c == '^':
 			isExponent = true
-			i++
-		default:
-			i++
+		default: // include '+'
 		}
+		i++
 	}
 	return m, i, nil
 }
@@ -140,8 +128,11 @@ func ParseInput(input string) (*polynomial, error) {
 		return nil, fmt.Errorf("equation must contains exactly 1 '=', got: %d", cnt)
 	}
 
+	// remove spaces and make all upper case
 	trimmed := strings.ReplaceAll(input, " ", "")
 	toupper := strings.ToUpper(trimmed)
+
+	// validate each side
 	split := strings.Split(toupper, "=")
 	LHS := split[0]
 	RHS := split[1]
@@ -153,6 +144,8 @@ func ParseInput(input string) (*polynomial, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// move all terms to the left side
 	rhs.reverse()
 	lhs.add(rhs)
 	lhs.reduce()

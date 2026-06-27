@@ -14,6 +14,28 @@ func TestParseInput_Success(t *testing.T) {
 		want *polynomial
 	}{
 		{
+			name: "Basic function with spaces only left hand side",
+			arg:  "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 0",
+			want: &polynomial{
+				monomials: []monomial{
+					{coefficient: 5, exponent: 0},
+					{coefficient: 4, exponent: 1},
+					{coefficient: -9.3, exponent: 2},
+				},
+			},
+		},
+		{
+			name: "Basic function with spaces only right hand side",
+			arg:  "0 = 5 * X^0 + 4 * X^1 - 9.3 * X^2",
+			want: &polynomial{
+				monomials: []monomial{
+					{coefficient: -5, exponent: 0},
+					{coefficient: -4, exponent: 1},
+					{coefficient: 9.3, exponent: 2},
+				},
+			},
+		},
+		{
 			name: "Most classic function with spaces and multipication sign",
 			arg:  "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0",
 			want: &polynomial{
@@ -26,7 +48,7 @@ func TestParseInput_Success(t *testing.T) {
 		},
 		{
 			name: "Inversed order with spaces and multipication sign",
-			arg:  "X^0* 5 + X^1 * 1 - X^2 * 9.3 = 1 * X^0",
+			arg:  "X^0 * 5 + X^1 * 1 - X^2 * 9.3 = 1 * X^0",
 			want: &polynomial{
 				monomials: []monomial{
 					{coefficient: 4, exponent: 0},
