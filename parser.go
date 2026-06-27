@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -23,7 +24,6 @@ func isValidChar(current, next byte) bool {
 	} else if unicode.IsDigit(rune(current)) {
 		return next == '*' || next == 'X'
 	}
-	fmt.Printf("Unexpected current char: %c\n, next char: %c\n", current, next)
 	return false
 }
 
@@ -48,18 +48,18 @@ func parseFloatPrefix(input string) (float64, int, error) {
 	floatRegex := regexp.MustCompile(`^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?`)
 	match := floatRegex.FindString(input)
 	if match == "" {
-		return 0, 0, fmt.Errorf("no valid float found in input: %s", input)
+		return 0, 0, fmt.Errorf("no valid float found: %s", input)
 	}
 	float, err := strconv.ParseFloat(match, 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("failed to parse float: %v", err)
+		return 0, 0, fmt.Errorf("parsing float: %v", err)
 	}
 
 	return float, len(match), nil
 }
 
-func parseToMonomial(input string) (monomial, int) {
-	m := monomial{
+func parseToMonomial(input string) (*monomial, int, error) {
+	m := &monomial{
 		coefficient: 1,
 		exponent:    0,
 	}
@@ -71,11 +71,10 @@ func parseToMonomial(input string) (monomial, int) {
 	i := 0
 	for i < len(input) {
 		if isEndToken(before, input[i]) {
-			return m, i
+			return m, i, nil
 		}
 		if !isValidChar(before, input[i]) {
-			//should return error
-			break
+			return nil, 0, fmt.Errorf("invalid char combinations: %c then %c", before, input[i])
 		}
 		before = input[i]
 		switch c := input[i]; {
@@ -87,18 +86,14 @@ func parseToMonomial(input string) (monomial, int) {
 				var int_val int
 				int_val, len, err = parseIntPrefix(input[i:])
 				if err != nil {
-					fmt.Printf("Error parsing exponent: %v\n", err)
-					// should return error
-					break
+					return nil, 0, fmt.Errorf("parsing exponent: %v\n", err)
 				}
 				m.exponent = int_val
 				isExponent = false
 			} else {
 				float, len, err = parseFloatPrefix(input[i:])
 				if err != nil {
-					// should return error
-					fmt.Printf("Error parsing float: %v\n", err)
-					break
+					return nil, 0, fmt.Errorf("parsing coefficient: %v\n", err)
 				}
 				m.coefficient *= float
 			}
@@ -111,8 +106,7 @@ func parseToMonomial(input string) (monomial, int) {
 			i++
 		case c == 'X':
 			if seenX {
-				// should return error
-				break
+				return nil, 0, errors.New("one clause can only have one X")
 			}
 			m.exponent = 1
 			seenX = true
@@ -124,14 +118,17 @@ func parseToMonomial(input string) (monomial, int) {
 			i++
 		}
 	}
-	return m, i
+	return m, i, nil
 }
 
 func parseToPolynomial(input string) (*polynomial, error) {
 	p := &polynomial{}
 	for i := 0; i < len(input); {
-		monomial, len := parseToMonomial(input[i:])
-		p.monomials = append(p.monomials, monomial)
+		monomial, len, err := parseToMonomial(input[i:])
+		if err != nil {
+			return nil, err
+		}
+		p.monomials = append(p.monomials, *monomial)
 		i += len
 	}
 	return p, nil
