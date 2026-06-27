@@ -127,19 +127,20 @@ func parseToMonomial(input string) (monomial, int) {
 	return m, i
 }
 
-func parseToPolynomial(input string) (p polynomial) {
+func parseToPolynomial(input string) (*polynomial, error) {
+	p := &polynomial{}
 	for i := 0; i < len(input); {
 		monomial, len := parseToMonomial(input[i:])
 		p.monomials = append(p.monomials, monomial)
 		i += len
 	}
-	return p
+	return p, nil
 }
 
-func ParseInput(input string) (polynomial, error) {
+func ParseInput(input string) (*polynomial, error) {
 	// separate right and left of equation
 	if cnt := strings.Count(input, "="); cnt != 1 {
-		return polynomial{}, fmt.Errorf("equation must contains exactly 1 '=', got: %d", cnt)
+		return nil, fmt.Errorf("equation must contains exactly 1 '=', got: %d", cnt)
 	}
 
 	trimmed := strings.ReplaceAll(input, " ", "")
@@ -147,8 +148,14 @@ func ParseInput(input string) (polynomial, error) {
 	split := strings.Split(toupper, "=")
 	LHS := split[0]
 	RHS := split[1]
-	lhs := parseToPolynomial(LHS)
-	rhs := parseToPolynomial(RHS)
+	lhs, err := parseToPolynomial(LHS)
+	if err != nil {
+		return nil, err
+	}
+	rhs, err := parseToPolynomial(RHS)
+	if err != nil {
+		return nil, err
+	}
 	rhs.reverse()
 	lhs.add(rhs)
 	lhs.reduce()

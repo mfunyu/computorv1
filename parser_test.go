@@ -11,12 +11,12 @@ func TestParseInput_Success(t *testing.T) {
 	tests := []struct {
 		name string
 		arg  string
-		want polynomial
+		want *polynomial
 	}{
 		{
 			name: "Most classic function with spaces and multipication sign",
 			arg:  "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0",
-			want: polynomial{
+			want: &polynomial{
 				monomials: []monomial{
 					{coefficient: 4, exponent: 0},
 					{coefficient: 4, exponent: 1},
@@ -27,7 +27,7 @@ func TestParseInput_Success(t *testing.T) {
 		{
 			name: "Inversed order with spaces and multipication sign",
 			arg:  "X^0* 5 + X^1 * 1 - X^2 * 9.3 = 1 * X^0",
-			want: polynomial{
+			want: &polynomial{
 				monomials: []monomial{
 					{coefficient: 4, exponent: 0},
 					{coefficient: 1, exponent: 1},
@@ -38,7 +38,7 @@ func TestParseInput_Success(t *testing.T) {
 		{
 			name: "Basic",
 			arg:  "5X^0 + 4X^1 - 9.3X^2 = 1X^0",
-			want: polynomial{
+			want: &polynomial{
 				monomials: []monomial{
 					{coefficient: 4, exponent: 0},
 					{coefficient: 4, exponent: 1},
@@ -49,7 +49,7 @@ func TestParseInput_Success(t *testing.T) {
 		{
 			name: "No spaces",
 			arg:  "5X^0+4X^1-9.3X^2=1X^0",
-			want: polynomial{
+			want: &polynomial{
 				monomials: []monomial{
 					{coefficient: 4, exponent: 0},
 					{coefficient: 4, exponent: 1},
@@ -60,7 +60,7 @@ func TestParseInput_Success(t *testing.T) {
 		{
 			name: "Omitted X^0 and X^1",
 			arg:  "5+4X-9.3X^2=1",
-			want: polynomial{
+			want: &polynomial{
 				monomials: []monomial{
 					{coefficient: 4, exponent: 0},
 					{coefficient: 4, exponent: 1},
@@ -71,7 +71,7 @@ func TestParseInput_Success(t *testing.T) {
 		{
 			name: "Have operators for the first expressions",
 			arg:  "-5X^0+4X^1-9.3X^2=+1X^0",
-			want: polynomial{
+			want: &polynomial{
 				monomials: []monomial{
 					{coefficient: -6, exponent: 0},
 					{coefficient: 4, exponent: 1},
@@ -82,7 +82,7 @@ func TestParseInput_Success(t *testing.T) {
 		{
 			name: "Omitted coefficient when 1",
 			arg:  "5+X-X^2=1",
-			want: polynomial{
+			want: &polynomial{
 				monomials: []monomial{
 					{coefficient: 4, exponent: 0},
 					{coefficient: 1, exponent: 1},
@@ -112,7 +112,7 @@ func TestParseInput_Success(t *testing.T) {
 // 	tests := []struct {
 // 		name string
 // 		arg args
-// 		want
+// 		want error
 // 	}{
 // 		{
 // 			name: "Negative exponents",

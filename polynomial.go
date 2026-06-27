@@ -47,7 +47,7 @@ func (p *polynomial) reduce() {
 	p.monomials = reducedMonomials
 }
 
-func (p *polynomial) add(other polynomial) {
+func (p *polynomial) add(other *polynomial) {
 	p.monomials = append(p.monomials, other.monomials...)
 }
 
