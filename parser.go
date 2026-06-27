@@ -140,9 +140,15 @@ func ParseInput(input string) (*polynomial, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(lhs.monomials) == 0 {
+		return nil, errors.New("incomplete equation: missing left hand side")
+	}
 	rhs, err := parseToPolynomial(RHS)
 	if err != nil {
 		return nil, err
+	}
+	if len(rhs.monomials) == 0 {
+		return nil, errors.New("incomplete equation: missing right hand side")
 	}
 
 	// move all terms to the left side

@@ -136,6 +136,30 @@ func TestParseInput_Error(t *testing.T) {
 		arg  string
 	}{
 		{
+			name: "Missing equal sign",
+			arg:  "5 * X^0 + 4 * X^1 - 9.3 * X^2",
+		},
+		{
+			name: "Multiple equal signs",
+			arg:  "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0 = 2 * X^0",
+		},
+		{
+			name: "Invalid character",
+			arg:  "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * Y^0",
+		},
+		{
+			name: "Invalid character with no spaces",
+			arg:  "5*X^0+4*X^1-9.3*X^2=1*Y^0",
+		},
+		{
+			name: "Incomplete equation no right hand side",
+			arg:  "5 * X^0 + 4 * X^1 - 9.3 * X^2 = ",
+		},
+		{
+			name: "Incomplete equation no left hand side",
+			arg:  " = 1 * X^0",
+		},
+		{
 			name: "Negative exponents",
 			arg:  "5 * X^0 + 4 * X^-1 - 9.3 * X^-2 = 1 * X^0",
 		},
