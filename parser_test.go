@@ -108,56 +108,45 @@ func TestParseInput_Success(t *testing.T) {
 	}
 }
 
-// func TestParseInput_Error(t *testing.T) {
-// 	tests := []struct {
-// 		name string
-// 		arg args
-// 		want error
-// 	}{
-// 		{
-// 			name: "Negative exponents",
-// 			arg: "5 * X^0 + 4 * X^-1 - 9.3 * X^-2 = 1 * X^0",
-// 			want:
-// 		},
-// 		{
-// 			name: "Negative exponents with no space, no multiplication operators",
-// 			arg: "5X^0+4X^-1-9.3X^-2=1X^0",
-// 			want:
-// 		},
-// 		{
-// 			name: "Negative exponents with omitted coefficient when 1",
-// 			arg: "5+X^+1-X^2=1",
-// 			want:
-// 		},
-// 		{
-// 			name: "Missing ^ for exponent expression",
-// 			arg: "5X0+ 4 * X1 - 9.3 * X^2 = 1 * X^0",
-// 			want:
-// 		},
-// 		{
-// 			name: "Duplicated signs",
-// 			arg: "--5++4X-9.3X^2=1",
-// 			want:
-// 		},
-// 		{
-// 			name: "Missing an operator",
-// 			arg: "5X0 + 4 * X1 9.3 * X^2 = 1 * X^0",
-// 			want:
-// 		},
-// 	}
+func TestParseInput_Error(t *testing.T) {
+	tests := []struct {
+		name string
+		arg  string
+	}{
+		{
+			name: "Negative exponents",
+			arg:  "5 * X^0 + 4 * X^-1 - 9.3 * X^-2 = 1 * X^0",
+		},
+		{
+			name: "Negative exponents with no space, no multiplication operators",
+			arg:  "5X^0+4X^-1-9.3X^-2=1X^0",
+		},
+		{
+			name: "Negative exponents with omitted coefficient when 1",
+			arg:  "5+X^+1-X^2=1",
+		},
+		{
+			name: "Missing ^ for exponent expression",
+			arg:  "5X0+ 4 * X1 - 9.3 * X^2 = 1 * X^0",
+		},
+		{
+			name: "Duplicated signs",
+			arg:  "--5++4X-9.3X^2=1",
+		},
+		{
+			name: "Missing an operator",
+			arg:  "5X0 + 4 * X1 9.3 * X^2 = 1 * X^0",
+		},
+	}
 
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			t.Parallel()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-// 			got, err := computorv1(t)
-// 			if err != nil {
-// 				t.Errorf("GetValidatedEquation() expect nil error but got %v", err)
-// 			}
-
-// 			if diff := pkgcmp.Diff(got, tt.want); diff != nil {
-// 				t.Errorf("GetValidatedEquation() response mismatch = (-want +got):\n%s", diff)
-// 			}
-// 		}
-// 	}
-// }
+			got, err := ParseInput(tt.arg)
+			if err == nil {
+				t.Errorf("ParseInput() expect error but got %v", got)
+			}
+		})
+	}
+}
