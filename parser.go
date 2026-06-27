@@ -73,7 +73,7 @@ func parseToMonomial(input string) (*monomial, int, error) {
 			return m, i, nil
 		}
 		if !isValidChar(prev, input[i]) {
-			return nil, 0, fmt.Errorf("invalid char combinations: %c then %c", prev, input[i])
+			return nil, 0, fmt.Errorf("invalid char: %c", input[i])
 		}
 		prev = input[i]
 		switch c := input[i]; {
@@ -155,6 +155,5 @@ func ParseInput(input string) (*polynomial, error) {
 	rhs.reverse()
 	lhs.add(rhs)
 	lhs.reduce()
-
 	return lhs, nil
 }

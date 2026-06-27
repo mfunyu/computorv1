@@ -47,6 +47,19 @@ func (p *polynomial) reduce() {
 	p.monomials = reducedMonomials
 }
 
+func (p *polynomial) degree() int {
+	if len(p.monomials) == 0 {
+		return 0
+	}
+	maxDegree := p.monomials[0].exponent
+	for _, m := range p.monomials {
+		if m.exponent > maxDegree {
+			maxDegree = m.exponent
+		}
+	}
+	return maxDegree
+}
+
 func (p *polynomial) add(other *polynomial) {
 	p.monomials = append(p.monomials, other.monomials...)
 }
